@@ -8,14 +8,13 @@ mermaid: true
 math: true
 ---
 
-## Introduction
 At <a href="https://tabernacle-raleigh.org/" target="_blank">Tabernacle Baptist Church</a> in Raleigh, NC, where I'm an active member, I'm in charge of scheduling people to stand at the entryway and ensure visitors are welcomed and directed to where they need to go.  When I first took on this responsibility I thought it would be trivial since I only needed to schedule one person a week and do my best to not schedule the same person two weeks in a row.
 
 Easy...right?
 
 As you might have guessed already nothing is that simple.  If those had been the only constraints I likely wouldn't be writing this post.  As I started building schedules I quickly realized that people have lives (and other commitments to the church) that would make this less trivial than I initially thought.
 
-There may be scheduling conflicts with other teams, people may be out of town for multiple weeks at a time, or there may be schedules from other teams that don't necessarily conflict with our own but put unnecessary burden on members when they're added to our schedule.  In addition, this isn't something I have to do only once, it will be a revolving commitment so it would benefit me to automate this in some way.  If I automate it I can also share it with others to ease their burden and feed back the schedules they build into the system for context in future runs.
+There may be scheduling conflicts with other teams, people may be out of town for multiple weeks at a time, or there may be schedules from other teams that don't necessarily conflict with our own but put unnecessary burden on members when they're added to our schedule.  In addition, this isn't something I have to do only once, it will be a revolving commitment so it would benefit me to automate this in some way.  If it's automated, it can be shared with others to ease their burden and feed back the schedules they build into the system for context in future runs.
 
 So, let's dive in and look at the steps I took to build an automated scheduling solution as well as the hurdles I encountered.
 
@@ -23,11 +22,11 @@ So, let's dive in and look at the steps I took to build an automated scheduling 
 
 Before we look at the process of building an algorithm let's understand our constraints in this problem.  To build a "fair" schedule we will need to adhere to the following:
 
-1. Members will not be scheduled on their "blackout" dates.
+1. Members will not be scheduled on their "blackout" dates - dates on which they will not be available.
 2. Members will not be scheduled in a way that will conflict with other schedules to which they're assigned.
 3. Member assignments will be evenly distributed across a schedule.  Assigning a member to a slot becomes more acceptable the further out that slot is from their last assignment.
 
-We'll need to make sure our algorithm covers all of these.
+We'll need to make sure our algorithm accounts for these simultaneously.
 
 ## First Attempt
 I'll admit my first attempt at a solution was a bit naive.  This was primarily due to time constratints which required me to build some schedules immediately.  It was sufficient for the time but, for reasons I'll explain later, it would not scale well.
