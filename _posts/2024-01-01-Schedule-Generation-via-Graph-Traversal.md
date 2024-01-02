@@ -10,13 +10,11 @@ math: true
 
 ## Introduction
 
-At <a href="https://tabernacle-raleigh.org/" target="_blank">Tabernacle Baptist Church</a> in Raleigh, NC, where I'm an active member, I'm in charge of scheduling people to stand at the entryway and ensure visitors are welcomed and directed to where they need to go. When I first took on this responsibility I thought it would be trivial since I only needed to schedule one person a week and do my best to not schedule the same person two weeks in a row.
+At <a href="https://tabernacle-raleigh.org/" target="_blank">Tabernacle Baptist Church</a> in Raleigh, NC, where I'm an active member, I'm in charge of scheduling people to stand at the entryway and ensure visitors are welcomed and directed to where they need to go. When I first took on this responsibility I thought it would be trivial since I only needed to schedule one person a week and do my best to not schedule the same person two weeks in a row. Easy...right?
 
-Easy...right?
+<img src="{{ '/assets/schedule-generation-graph-traversal/meme.png' | relative_url }}" width="350px"/>
 
-As you might have guessed nothing is that simple. If those had been the only constraints I likely wouldn't be writing this post. As I started building schedules I quickly realized that people have lives (and other commitments to the church) that would make this less trivial than I initially thought.
-
-There may be scheduling conflicts with other teams, people may be out of town for multiple weeks at a time, or there may be schedules from other teams that don't necessarily conflict with our own but put unnecessary burden on members when they're added to our schedule. In addition, I'm not the only one building schedules nor is this something I have to do only once. If I automate it, it can be shared with others to ease their burden and the schedules they build could even be fed back into the system so schedules from other teams won't conflict.
+As you might have guessed nothing is that simple. If those had been the only constraints I likely wouldn't be writing this post. As I started building schedules I quickly realized that people have lives (and other commitments to the church) that would make this less trivial than I initially thought. There may be scheduling conflicts with other teams, people may be out of town for multiple weeks at a time, or there may be schedules from other teams that don't necessarily conflict with our own but put unnecessary burden on members when they're added to our schedule. In addition, I'm not the only one building schedules nor is this something I have to do only once. If I automate it, it can be shared with others to ease their burden and the schedules they build could even be fed back into the system so schedules from other teams won't conflict.
 
 So, let's dive in and look at the steps I took to build an automated scheduling solution as well as the hurdles I encountered. The intent behind this post is to walk you through the steps of understanding a problem and thinking through how to solve it algorithmically. As such I include only relevant code snippets in each section.
 
@@ -39,6 +37,8 @@ I decided to go with a queue-based approach. The basic algorithm works like this
 2. For each day, enumerate the list of members checking if each one can be scheduled on the given day.
 3. Schedule the first available member and move them to the back of the queue.
 4. Loop
+
+<img src="{{ '/assets/schedule-generation-graph-traversal/queue-scheduling.gif' | relative_url }}"/>
 
 ```python
 # Days populated elsewhere
@@ -75,7 +75,7 @@ for day in days:
 return schedule
 ```
 
-This works well and fairly quickly but has some issues that may not be obvious at first glance. There are some things I'm not showing you for the sake of brevity, such as how the member list is populated. That may seem insignificant but as I discovered during my testing it matters very much. Consider the effect our constraints have on the resulting schedule with regard to the order in which we enumerate our member list. We may end up with an "unfair" schedule due to an assignment we made early on that excluded the member from being scheduled again. That sounds a bit confusing so let's look at an example.
+This works well and fairly quickly but has some issues that may not be obvious at first glance. There are some things I'm not showing you for the sake of brevity, such as how the member list is populated. That may seem insignificant but it matters very much. Consider the effect our constraints have on the resulting schedule with regard to the order in which we enumerate our member list. We may end up with an "unfair" schedule due to an assignment we made early on that excluded the member from being scheduled again. That sounds a bit confusing so let's look at an example.
 
 Assume we have three members `[m1, m2, m3]` and three days `[d1, d2, d3]` to schedule. Assuming no one has any blackouts or conflicts then any permutation of members to days is valid. However, what if `m2` and `m3` have a blackout on `d2`? The resulting schedule would be `{d1: m1, d2: m1, d3: m2}`! Not only would `m1` be scheduled two times in a row but `m3` wouldn't be scheduled at all, breaking two of our constraints. To put it another way, we can't always start with `m1` to build our schedules. To solve this issue we can run the algorithm over all permutations of the list.
 
@@ -235,8 +235,6 @@ When we visit a node we set its cost to the maximum and decrement all others by 
 
 ### Traversing the Graph
 
-<img src="{{ '/assets/graph-traversal.gif' | relative_url }}"/>
-
 At this point all of the hard work has been done. All that's left is to hop from node to node traveling down the cheapest path. But how do we know which path will be the cheapest? What if the cheapest path at depth 3 leads to a more expensive path overall by depth 10? Our traversal algorithm will need a <a href="https://en.wikipedia.org/wiki/Heuristic_(computer_science)" target="_blank">heuristic</a> to help guide it to an optimal path. Our heuristic is simple:
 
 $$
@@ -301,13 +299,17 @@ def traverse(entry):
     return goals
 ```
 
+Using our example of three members and three days, the following diagram should help you visualize what's happening here. Notice how `m1-d2` and its children are pruned after `m2-d2` and `m3-d2` are selected. This is due to the root node being `m1` so `m1`'s visibility is higher than `m2` and `m3`. The algorithm then follows the `m2-d2` path and expands its children. Since `m1` and `m2` have already been selected in the path their visibility is higher than `m3` so `m3'-d3` gets selected. Now there's another optimal path from `m3-d2` to `m2"-d3` but its cost is at best equal to the cost of the path the algorithm just discovered. There is no point in continuing the search so it terminates.
+
+<img src="{{ '/assets/schedule-generation-graph-traversal/graph-traversal.gif' | relative_url }}"/>
+
 Look at the result of our `time` function with the same inputs as our earlier example:
 
 ```
 0.03s user 0.01s system 93% cpu 0.043 total
 ```
 
-43 milliseconds is a significant improvement! This was with nine members across four months. Even when scaled up to **twenty members** across **ten years** the time to complete barely jumps to just under half a second:
+Down from 15 seconds to 43 **milliseconds** is a significant improvement! This was with nine members across four months. Even when scaled up to **twenty members** across **ten years** the time to complete barely jumps to just under half a second:
 
 ```
 0.41s user 0.02s system 99% cpu 0.431 total
@@ -318,4 +320,4 @@ You may have noticed constraint #2 was not covered in this post. This is because
 
 This algorithm is part of a larger scheduling application that consists of a web frontend, database, and containerized backend that facilitate the management of teams, members, and schedules. When the backend receives a request to build a new schedule it first pulls all other schedules with overlapping dates and cross-references the assignments with the request's member list. Everywhere there is a schedule assignment for one of the members, a blackout date is created and added to the request which guarantees no conflicts with the existing schedules.
 
-If you've made it all the way to the end, I want to thank you for taking the time to read this post. I have many ideas for future posts with regard to cloud architecture, infrastructure as code, container orchestration, and much more that I hope you'll come back to enjoy.
+If you've made it all the way to the end, I want to thank you for taking the time to read this post. I hope it has provided some insight into how simply framing a problem in another way can provide significant improvements in its solution. I have many ideas for future posts with regard to cloud architecture, infrastructure as code, container orchestration, and much more that I hope you'll come back to enjoy.
