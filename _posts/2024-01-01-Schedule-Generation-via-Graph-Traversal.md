@@ -12,7 +12,7 @@ math: true
 
 At <a href="https://tabernacle-raleigh.org/" target="_blank">Tabernacle Baptist Church</a> in Raleigh, NC, where I'm an active member, I'm in charge of scheduling people to stand at the entryway and ensure visitors are welcomed and directed to where they need to go. When I first took on this responsibility I thought it would be trivial since I only needed to schedule one person a week and do my best to not schedule the same person two weeks in a row. Easy...right?
 
-<img src="{{ '/assets/schedule-generation-graph-traversal/meme.png' | relative_url }}" width="350px"/>
+<img src="{{ '/assets/schedule-generation-graph-traversal/meme.png' | relative_url }}" width="350px" alt="Anakin and Padme meme"/>
 
 As you might have guessed nothing is that simple. If those had been the only constraints I likely wouldn't be writing this post. As I started building schedules I quickly realized that people have lives (and other commitments to the church) that would make this less trivial than I initially thought. There may be scheduling conflicts with other teams, people may be out of town for multiple weeks at a time, or there may be schedules from other teams that don't necessarily conflict with our own but put unnecessary burden on members when they're added to our schedule. In addition, I'm not the only one building schedules nor is this something I have to do only once. If I automate it, it can be shared with others to ease their burden and the schedules they build could even be fed back into the system so schedules from other teams won't conflict.
 
@@ -38,7 +38,7 @@ I decided to go with a queue-based approach. The basic algorithm works like this
 3. Schedule the first available member and move them to the back of the queue.
 4. Loop
 
-<img src="{{ '/assets/schedule-generation-graph-traversal/queue-scheduling.gif' | relative_url }}"/>
+<img src="{{ '/assets/schedule-generation-graph-traversal/queue-scheduling.gif' | relative_url }}" alt="Queue scheduler animation"/>
 
 ```python
 # Days populated elsewhere
@@ -301,7 +301,7 @@ def traverse(entry):
 
 Using our example of three members and three days, the following diagram should help you visualize what's happening here. Notice how `m1-d2` and its children are pruned after `m2-d2` and `m3-d2` are selected. This is due to the root node being `m1` so `m1`'s visibility is higher than `m2` and `m3`. The algorithm then follows the `m2-d2` path and expands its children. Since `m1` and `m2` have already been selected in the path their visibility is higher than `m3` so `m3'-d3` gets selected. Now there's another optimal path from `m3-d2` to `m2"-d3` but its cost is at best equal to the cost of the path the algorithm just discovered. There is no point in continuing the search so it terminates.
 
-<img src="{{ '/assets/schedule-generation-graph-traversal/graph-traversal.gif' | relative_url }}"/>
+<img src="{{ '/assets/schedule-generation-graph-traversal/graph-traversal.gif' | relative_url }}" alt="Graph scheduler animation"/>
 
 Look at the result of our `time` function with the same inputs as our earlier example:
 
