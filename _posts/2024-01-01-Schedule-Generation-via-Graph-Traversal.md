@@ -8,6 +8,8 @@ mermaid: true
 math: true
 ---
 
+<img src="{{ '/assets/schedule-generation-graph-traversal/header.jpg' | relative_url }}" alt="Header"/>
+
 ## Introduction
 
 At <a href="https://tabernacle-raleigh.org/" target="_blank">Tabernacle Baptist Church</a> in Raleigh, NC, where I'm an active member, I'm in charge of scheduling people to stand at the entryway and ensure visitors are welcomed and directed to where they need to go. When I first took on this responsibility I thought it would be trivial since I only needed to schedule one person a week and do my best to not schedule the same person two weeks in a row. Easy...right?
