@@ -3,7 +3,7 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-<img src="{{ '/assets/about/pfp.png' | relative_url }}" width="275px">
+<img src="{{ '/assets/about/pfp.png' | relative_url }}" width="275px" alt="Author's Picture">
 
 My name is Nick and I'm an Engineering Technical Leader at Cisco Systems in Raleigh, NC. I've been fidgeting with computers my whole life and getting paid for it for 15 years. I've dabbled in just about everything from layer 1 to 7 over the years but my focus these days is on cloud architecture, software development, DevOps, IAC, and Kubernetes.
 
