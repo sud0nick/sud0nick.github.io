@@ -4,7 +4,6 @@ title: Iterative Resources in Terraform
 date: 2024-04-19 16:30:00 -0500
 categories: [IaC, terraform]
 tags: [terraform, iac, cloud, aws]
-comments: true
 ---
 
 <img src="{{ '/assets/iterative-resources-terraform/header.png' | relative_url }}" alt="Header"/>
@@ -251,20 +250,3 @@ Here's some more info from the [docs](https://developer.hashicorp.com/terraform/
 
 ## Conclusion
 Iterating over data structures can be a powerful way to deploy your resources and keep your code tidy. However, you must be aware of the different use cases for terraform's iterative meta-arguments and know when to apply each. When used correctly they have the ability to transform your modules from a kludgy mess to an elegant solution without compromising operational stability.
-
-{% if page.comments %}
-<div id="disqus_thread"></div>
-<script>
-    var disqus_config = function () {
-    this.page.url = "{{ page.url }}";
-    this.page.identifier = "iterative-resources-terraform";
-    };
-    (function() { // DON'T EDIT BELOW THIS LINE
-    var d = document, s = d.createElement('script');
-    s.src = 'https://infiniteinterval.disqus.com/embed.js';
-    s.setAttribute('data-timestamp', +new Date());
-    (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-{% endif %}
