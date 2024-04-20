@@ -10,6 +10,8 @@ comments: true
 <img src="{{ '/assets/iterative-resources-terraform/header.png' | relative_url }}" alt="Header"/>
 
 ## Introduction
+You are probably already aware that you can iterate over lists, sets, and maps in terraform to deploy many instances from a single resource block. However, I'm surprised to find how few people know the difference between the two methods terraform offers for iteration.
+
 `count` and `for_each` work in similar ways but have a subtle difference between them that could spell disaster for your infrastructure. The main difference between them is how the reference to the resource is stored in the state file. When you use `count`, each reference is stored at an index in an array like this:
 
 ```config
@@ -253,12 +255,9 @@ Iterating over data structures can be a powerful way to deploy your resources an
 {% if page.comments %}
 <div id="disqus_thread"></div>
 <script>
-    /**
-    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
     var disqus_config = function () {
     this.page.url = "{{ page.url }}";
-    this.page.identifier = "{{ page.id }}";
+    this.page.identifier = "iterative-resources-terraform";
     };
     (function() { // DON'T EDIT BELOW THIS LINE
     var d = document, s = d.createElement('script');
